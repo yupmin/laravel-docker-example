@@ -4,10 +4,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-#    volumes:
-#      - ./:/var/www/html
-    env_file:
-      - .env
+    volumes:
+      - ./:/var/www/html
+#      - /var/www/html
+#    env_file:
+#      - .env
   web:
     build:
       context: ./docker

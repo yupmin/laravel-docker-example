@@ -1,9 +1,16 @@
 FROM php:7.3-fpm-alpine
 MAINTAINER yun young jin <yupmin@gmail.com>
 
-RUN apk add zip icu-dev zlib-dev libzip-dev && \
-    docker-php-ext-install opcache intl bcmath zip pdo_mysql && \
-    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
+RUN apk update && \
+# for composer
+    apk add zip git && \
+    apk add --no-cache \
+# for intl
+    icu-dev \
+# for zip
+    zlib-dev libzip-dev && \
+    docker-php-ext-install opcache intl bcmath zip pdo_mysql
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
     sed -i "s/display_errors = Off/display_errors = On/" /usr/local/etc/php/php.ini && \
     sed -i "s/upload_max_filesize = .*/upload_max_filesize = 10M/" /usr/local/etc/php/php.ini && \
     sed -i "s/post_max_size = .*/post_max_size = 12M/" /usr/local/etc/php/php.ini && \
@@ -18,14 +25,14 @@ RUN apk add zip icu-dev zlib-dev libzip-dev && \
     sed -i "s/^;clear_env = no$/clear_env = no/" /usr/local/etc/php-fpm.d/www.conf
 
 COPY . /var/www/html
-RUN cp .env.example .env
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
-RUN curl -sS https://getcomposer.org/installer | php -- && \
+RUN cp .env.example .env && \
+    curl -sS https://getcomposer.org/installer | php -- && \
 # for more speed
     php composer.phar config -g repos.packagist composer https://packagist.jp && \
     php composer.phar global require hirak/prestissimo && \
-# composer install for lumen
+# composer install
     php composer.phar install --no-dev --no-scripts && \
     php composer.phar dumpautoload --optimize && \
 # change directory permission
