@@ -34,7 +34,6 @@ RUN cp .env.example .env && \
     php composer.phar global require hirak/prestissimo && \
 # composer install
     php composer.phar install --no-dev --no-scripts && \
-    php composer.phar dumpautoload --optimize && \
 # change directory permission
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache/
 
