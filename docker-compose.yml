@@ -4,16 +4,10 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    ports:
+      - 18080:80
     volumes:
       - ./:/var/www/html
 #      - /var/www/html
 #    env_file:
 #      - .env
-  web:
-    build:
-      context: ./docker
-      dockerfile: web.dockerfile
-    ports:
-      - 18080:80
-    volumes_from:
-      - app:ro
